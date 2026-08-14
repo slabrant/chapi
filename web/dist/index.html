@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>chapi</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <header>
+      <h1>chapi</h1>
+      <p class="note">
+        Placeholder client. The real client is a separate project; this page
+        exists to exercise the server by hand.
+      </p>
+    </header>
+
+    <section id="login">
+      <form id="login-form">
+        <label for="password">Shared password</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+        <label for="nick">Nickname</label>
+        <input id="nick" type="text" value="anon" required />
+        <button type="submit">Connect</button>
+      </form>
+    </section>
+
+    <section id="chat" hidden>
+      <div id="status" role="status"></div>
+      <form id="room-form">
+        <label for="room">Room</label>
+        <input id="room" type="text" value="general" />
+        <button type="submit">Join</button>
+      </form>
+      <ol id="log"></ol>
+      <form id="send-form">
+        <input id="body" type="text" placeholder="Message" autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </section>
+
+    <script src="app.js"></script>
+  </body>
+</html>

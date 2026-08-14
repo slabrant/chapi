@@ -1,0 +1,5 @@
+# Built binary
+/chapi
+
+# Runtime state: room archives and generated secrets
+/data/
