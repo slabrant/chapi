@@ -1,17 +1,46 @@
-# chapi
+# Ultralight Chat
 
-The backend for ultralight chat, built to [DESIGN.md](DESIGN.md). One Go
-binary, one dependency, the client assets embedded in it.
+A group chat for about twenty people that's one binary and one password.
 
-DESIGN.md is the authority on *why*. This file covers what it deliberately
-leaves open: the client-to-server frames, the environment variables, and the
-decisions taken while implementing it.
+You drop a single file on a server, set a password, and that's the install. No
+database, no Redis, no docker-compose, no `node_modules` — the web app is baked
+inside the binary, and the whole thing has exactly one dependency. No accounts
+either: you type the shared password, pick a nickname, you're in.
+
+The nice trick is where history lives. Your browser keeps the real archive; the
+server only holds a short recent tail plus a plain text log. That makes the
+server tiny and basically disposable. And because every message is signed and
+numbered in order, when something *is* missing you see an actual gap instead of
+a timeline that looks complete but quietly isn't — small chat systems almost
+always get that wrong.
+
+Images work the way you'd want: shrunk in your browser before they're sent, and
+the server never writes image bytes to disk. A year of chat for twenty people is
+a few megabytes.
+
+The frontend has no build step at all. The files in the repo are the files the
+browser runs — no npm, no bundler, no framework. You could read the entire
+system, both halves, in an afternoon.
+
+It's not trying to be a smaller Slack. It's trying to be the thing you'd
+actually want for a group of twenty.
+
+## This repository
+
+`chapi` is the server half. The client is [a separate project][client]; what
+ships in `web/dist` today is a placeholder for exercising the server by hand.
 
 ```
 go test ./...
 go build ./cmd/chapi
 CHAPI_PASSWORD=... ./chapi
 ```
+
+[DESIGN.md](DESIGN.md) is the authority on *why*. The rest of this file covers
+what it deliberately leaves open: the client-to-server frames, the environment
+variables, and the decisions taken while implementing it.
+
+[client]: https://github.com/slabrant/chat
 
 ## Layout
 
