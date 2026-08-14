@@ -1,0 +1,36 @@
+[Unit]
+Description=chapi ultralight chat server
+Documentation=https://github.com/slabrant/chapi
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/chapi
+EnvironmentFile=/etc/chapi/chapi.env
+Restart=on-failure
+RestartSec=2s
+
+DynamicUser=yes
+# Creates and owns /var/lib/chapi, which holds the room archives and the
+# generated signing key. Losing that directory loses the history the archive
+# is the permanent copy of, so it is what a backup should target.
+StateDirectory=chapi
+WorkingDirectory=/var/lib/chapi
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target

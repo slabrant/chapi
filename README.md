@@ -124,6 +124,24 @@ the whole archive into apparent forgeries. Back it up with the archive.
 `X-Forwarded-For` can spread password guesses across unlimited rate-limit
 buckets. Turn it on only behind a proxy that overwrites the header.
 
+## Deployment
+
+`deploy/` holds a systemd unit, an environment file to fill in, and a Caddyfile.
+
+```
+go build -o /usr/local/bin/chapi ./cmd/chapi
+install -D -m600 deploy/chapi.env.example /etc/chapi/chapi.env   # set CHAPI_PASSWORD
+install -D -m644 deploy/chapi.service /etc/systemd/system/chapi.service
+systemctl enable --now chapi
+```
+
+The server listens on loopback and Caddy terminates TLS in front of it.
+Caddy v2 proxies the WebSocket upgrade with no extra configuration.
+
+Back up `CHAPI_DATA_DIR`. It holds the room archives — the permanent copy of
+history, and the only place the sequence counters can be recovered from — and
+the signing key those archives verify against.
+
 ## Decisions taken while implementing
 
 DESIGN.md left these open or unstated. Each is a place to push back.

@@ -1,0 +1,34 @@
+# Caddy in front for TLS. Replace the hostname and reload.
+#
+#   caddy validate --config deploy/Caddyfile
+#   caddy reload   --config deploy/Caddyfile
+
+chat.example.com {
+	# Caddy v2 proxies a WebSocket upgrade with no extra configuration: after
+	# the handshake it copies bytes in both directions without parsing frames.
+	#
+	# That is also why there is no per-message size limit to raise here. The
+	# limit that matters is on each end of the connection, not in between:
+	# the server sets its own from CHAPI_IMAGE_MAX_BYTES, and a client library
+	# needs the same treatment because the usual default is 32 KiB, far below
+	# image size. If you swap Caddy for something that does inspect frames,
+	# that is where to look first when large images fail and small ones work.
+	reverse_proxy 127.0.0.1:8080
+
+	# Applies to the HTML, CSS and JS only. The upgrade response is not
+	# encoded, and message payloads are compressed by permessage-deflate on
+	# the WebSocket itself.
+	encode zstd gzip
+
+	# Caddy sets X-Forwarded-For, which is what CHAPI_TRUST_PROXY_HEADER=true
+	# tells the login rate limiter to read. Only enable that when the server
+	# is reachable solely through this proxy; a client that can reach the Go
+	# process directly can forge the header and spread guesses across
+	# unlimited buckets.
+
+	log {
+		# The token travels as a WebSocket subprotocol rather than in the URL,
+		# so request logs do not capture credentials.
+		output file /var/log/caddy/chat.log
+	}
+}
